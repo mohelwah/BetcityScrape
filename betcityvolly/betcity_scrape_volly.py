@@ -71,6 +71,11 @@ class Scraper:
             # List of second half Beide teams scoren
             beide_teams_scoren_2e_list = []
             
+            # for Vollyball srip
+            teams_list = []
+            winnar_list = []
+            top2_list = []
+
             def click(webElement):
                 ActionChains(driver).move_to_element(webElement)
                 webElement.click()
@@ -228,6 +233,11 @@ class Scraper:
                         winnar.append(float(numbers[i].text))
                     else:
                         top2.append(float(numbers[i].text))
+                
+                teams_list.append(teams)
+                winnar_list.append(winnar)
+                top2_list.append(top2)
+
                 return(teams,  winnar, top2)
 
             def scrape_halves():
@@ -456,14 +466,22 @@ class Scraper:
                 
                 # Scrape the halves odds category data
                 #scrape_halves()
+
+            '''
+            for vollyball
+            '''
+            # After each competition we create a dataframe with the odds that we have so far collecte
+            dict_worker = {"Teams": teams_list, "Winnar": winnar_list, "Top2": top2_list} 
+            print(f'his is dict_worker: {dict_worker}')
+
             '''    
             # After each competition we create a dataframe with the odds that we have so far collected
             dict_worker = {'Teams': names, 'result' : result_list, 'over_under' : over_under_list, 'over_under_1e' : over_under_1e_list,
                         'over_under_2e' : over_under_2e_list, 'handicap' : handicap_list, 'beide_teams_scoren' : beide_teams_scoren_list,
                         'beide_teams_scoren_1e' : beide_teams_scoren_1e_list, 'beide_teams_scoren_2e' : beide_teams_scoren_2e_list, 'dubbele_kans' : dubbele_kans_list, 'bet_links' : bet_links}
-        
+            '''
             dataframes[worker] = pd.concat([dataframes[worker], pd.DataFrame.from_dict(dict_worker)])
-        '''
+            print(f'his is dataframes[worker]: {dataframes[worker].head()}')
         
         ## Run the Scraper
         start_time = time.time()
@@ -510,7 +528,7 @@ class Scraper:
             if skip:
                 continue
             
-            output = open('df_betcity_volly', 'wb')
+            output = open('df_betcity_volly_test', 'wb')
             pickle.dump(df_betcity, output)
             output.close()
             
