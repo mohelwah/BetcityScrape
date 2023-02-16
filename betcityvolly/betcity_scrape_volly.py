@@ -79,7 +79,8 @@ class Scraper:
             def scrape_result():
                 # Find all 1x2 odds
                 try:
-                    result = driver.find_element(By.XPATH, ".//li[@class='KambiBC-bet-offer-subcategory KambiBC-bet-offer-subcategory--onecrosstwo']")
+                    #result = driver.find_element(By.XPATH, ".//li[@class='KambiBC-bet-offer-subcategory KambiBC-bet-offer-subcategory--onecrosstwo']")
+                    result = driver.find_element(By.XPATH, ".//li[@class='KambiBC-sandwich-filter__event-list-info']")
                 except:
                     return False
                     

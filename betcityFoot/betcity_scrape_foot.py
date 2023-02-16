@@ -12,7 +12,7 @@ import time
 import pickle
 
 import pandas as pd
-executable_path = "C:\webdriver\chromedriver.exe"
+#executable_path = "C:\webdriver\chromedriver.exe"
 
 class Scraper:
     
@@ -430,14 +430,14 @@ class Scraper:
         ## Run the Scraper
         start_time = time.time()
         
-        with open('betcity_volly.txt', 'r') as f:
+        with open('betcity_links.txt', 'r') as f:
             links = f.read().split('\n')
         
         amount_links = len(links)
         links_used = 0
         
         for i in range(0, max_workers):
-            drivers.append(webdriver.Chrome(executable_path=executable_path,options=options))
+            drivers.append(webdriver.Chrome(options=options))
             
             threads.append(threading.Thread(target=cookies, args=[drivers[i]]))
             threads[i].start()
