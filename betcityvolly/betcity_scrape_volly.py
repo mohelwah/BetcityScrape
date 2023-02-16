@@ -342,12 +342,13 @@ class Scraper:
             matchLinks = []
         
             # Wait for the data to load
+            
             try:
                 wait(".//ul[@class='KambiBC-sandwich-filter__list']")
             except:
                 print("Competition not found")
                 return
-        
+           
             # Find all matches
             matches = driver.find_elements(By.XPATH, ".//li[@class='KambiBC-sandwich-filter__event-list-item']")
             
@@ -406,19 +407,19 @@ class Scraper:
                 bet_links.append(driver.current_url)
                 
                 # Scrape the dubbele kans data
-                scrape_dubbele_kans()
+                #scrape_dubbele_kans()
                 
                 # Scrape the over/under data
-                scrape_over_under()
+                #scrape_over_under()
                 
                 # Scrape the beide teams scoren data
-                scrape_beide_teams_scoren()
+                #scrape_beide_teams_scoren()
                 
                 # Scrape the handicap data
-                scrape_handicap()
+                #scrape_handicap()
                 
                 # Scrape the halves odds category data
-                scrape_halves()
+                #scrape_halves()
                 
             # After each competition we create a dataframe with the odds that we have so far collected
             dict_worker = {'Teams': names, 'result' : result_list, 'over_under' : over_under_list, 'over_under_1e' : over_under_1e_list,
