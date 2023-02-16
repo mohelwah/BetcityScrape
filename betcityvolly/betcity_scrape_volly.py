@@ -11,6 +11,10 @@ from bs4 import BeautifulSoup
 import threading
 import time
 import pickle
+from random import randint
+
+def small_sleep(low=1, high=5):
+    time.sleep(randint(low, high))
 
 import pandas as pd
 executable_path = "C:\webdriver\chromedriver.exe"
@@ -209,23 +213,22 @@ class Scraper:
                 # Add all the handicap odds to the right list
                 handicap_list.append(handicap_string)
             
-            def volly_scrape(link):
+            def volly_scrape(soup):
                 teams = []
                 winnar = []
                 top2 = []
-                driver.get(link)
-                soup = BeautifulSoup(driver.page_source, 'html.parser')
-                teams = soup.find_all(class_="KambiBC-outcomes-list__label")
-                for team in teams:
-                    teams.append(team.text)
+   
+                t = soup.find_all(class_="KambiBC-outcomes-list__label")
+                for i in range(len(t)):
+                    teams.append(t[i].text)
+                
                 numbers = soup.find_all(class_="OutcomeButton__Odds-sc-lxwzc0-6")
-
                 for i in range(len(numbers)):
                     if i < len(numbers)/2:
-                        winnar.append(int(numbers[i].text))
+                        winnar.append(float(numbers[i].text))
                     else:
-                        top2.append(int(numbers[i].text))
-                print(teams, winnar, top2)
+                        top2.append(float(numbers[i].text))
+                return(teams,  winnar, top2)
 
             def scrape_halves():
                 # Click to see all half category bets
@@ -429,14 +432,16 @@ class Scraper:
                 print('got to link')
                 # Wait for the data to load
                 #wait(".//button[@class='KambiBC-outcomes-list__toggler-toggle-button']")
+                # selelenium wait page to load
+                small_sleep(high=10)
                 
                 # Scrape the result data
                 #if not scrape_result():
                     #continue
                 
                 bet_links.append(driver.current_url)
-                
-                volly_scrape()
+                soup = BeautifulSoup(driver.page_source, 'html.parser')
+                print(volly_scrape(soup=soup))
                 # Scrape the dubbele kans data
                 #scrape_dubbele_kans()
                 
