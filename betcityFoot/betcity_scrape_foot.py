@@ -12,7 +12,7 @@ import time
 import pickle
 
 import pandas as pd
-#executable_path = "C:\webdriver\chromedriver.exe"
+executable_path = "C:\webdriver\chromedriver.exe"
 
 class Scraper:
     
@@ -20,7 +20,7 @@ class Scraper:
         
         # Changing chromedriver default options
         options = Options()
-        options.headless = False # Change to False if you want it to happen visually
+        #options.headless = False # Change to False if you want it to happen visually
         options.add_argument("--start-maximized") #Headless = True
         
         max_workers = 1
@@ -437,7 +437,7 @@ class Scraper:
         links_used = 0
         
         for i in range(0, max_workers):
-            drivers.append(webdriver.Chrome(options=options))
+            drivers.append(webdriver.Chrome(executable_path=executable_path,options=options))
             
             threads.append(threading.Thread(target=cookies, args=[drivers[i]]))
             threads[i].start()
