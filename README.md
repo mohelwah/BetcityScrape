@@ -18,4 +18,5 @@ this is scaffold template for python
     - in linux : which python  
     - in windows: Get-Command python | fl *
  - get pack list:
-    - pip freeze or pip list
+    - pip freeze or pip list 
+    test
