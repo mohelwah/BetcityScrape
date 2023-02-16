@@ -7,6 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.common.action_chains import ActionChains
+from bs4 import BeautifulSoup
 import threading
 import time
 import pickle
@@ -20,7 +21,7 @@ class Scraper:
         
         # Changing chromedriver default options
         options = Options()
-        options.headless = False # Change to False if you want it to happen visually
+        #options.headless = False # Change to False if you want it to happen visually
         options.add_argument("--start-maximized") #Headless = True
         
         max_workers = 1
@@ -208,6 +209,24 @@ class Scraper:
                 # Add all the handicap odds to the right list
                 handicap_list.append(handicap_string)
             
+            def volly_scrape(link):
+                teams = []
+                winnar = []
+                top2 = []
+                driver.get(link)
+                soup = BeautifulSoup(driver.page_source, 'html.parser')
+                teams = soup.find_all(class_="KambiBC-outcomes-list__label")
+                for team in teams:
+                    teams.append(team.text)
+                numbers = soup.find_all(class_="OutcomeButton__Odds-sc-lxwzc0-6")
+
+                for i in range(len(numbers)):
+                    if i < len(numbers)/2:
+                        winnar.append(int(numbers[i].text))
+                    else:
+                        top2.append(int(numbers[i].text))
+                print(teams, winnar, top2)
+
             def scrape_halves():
                 # Click to see all half category bets
                 try:
@@ -362,7 +381,7 @@ class Scraper:
 
                 except:
                     continue
-                
+                '''
                 if match_day == "ma":
                     match_day = 0
                 elif match_day == "di":
@@ -387,7 +406,9 @@ class Scraper:
                 else:
                     if match_day != 0 and match_day != 6:
                         continue
-                    
+                '''
+
+
                 link = match.find_element(By.XPATH, ".//a").get_attribute('href')
                 print(f'his is Link: {link}')
 
@@ -397,23 +418,25 @@ class Scraper:
 
                 except:
                     continue
-                if link.find('live') == -1 and amount > 40:
+                if link.find('live') == -1 and amount < 40:
                     matchLinks.append(link)
                     print(f'his is MatchLinks: {matchLinks}')
                 
             # Visit each single match to extract the needed data
             for link in matchLinks:
-                driver.get(link)
                 
+                driver.get(link)
+                print('got to link')
                 # Wait for the data to load
-                wait(".//button[@class='KambiBC-outcomes-list__toggler-toggle-button']")
+                #wait(".//button[@class='KambiBC-outcomes-list__toggler-toggle-button']")
                 
                 # Scrape the result data
-                if not scrape_result():
-                    continue
+                #if not scrape_result():
+                    #continue
                 
                 bet_links.append(driver.current_url)
                 
+                volly_scrape()
                 # Scrape the dubbele kans data
                 #scrape_dubbele_kans()
                 
@@ -428,18 +451,18 @@ class Scraper:
                 
                 # Scrape the halves odds category data
                 #scrape_halves()
-                
+            '''    
             # After each competition we create a dataframe with the odds that we have so far collected
             dict_worker = {'Teams': names, 'result' : result_list, 'over_under' : over_under_list, 'over_under_1e' : over_under_1e_list,
                         'over_under_2e' : over_under_2e_list, 'handicap' : handicap_list, 'beide_teams_scoren' : beide_teams_scoren_list,
                         'beide_teams_scoren_1e' : beide_teams_scoren_1e_list, 'beide_teams_scoren_2e' : beide_teams_scoren_2e_list, 'dubbele_kans' : dubbele_kans_list, 'bet_links' : bet_links}
         
             dataframes[worker] = pd.concat([dataframes[worker], pd.DataFrame.from_dict(dict_worker)])
-        
+        '''
         
         ## Run the Scraper
         start_time = time.time()
-        
+        print('starting scraper')
         with open('betcity_volly.txt', 'r') as f:
             links = f.read().split('\n')
         
