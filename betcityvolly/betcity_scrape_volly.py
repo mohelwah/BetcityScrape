@@ -12,7 +12,7 @@ import time
 import pickle
 
 import pandas as pd
-#executable_path = "C:\webdriver\chromedriver.exe"
+executable_path = "C:\webdriver\chromedriver.exe"
 
 class Scraper:
     
@@ -350,13 +350,16 @@ class Scraper:
                 return
            
             # Find all matches
-            matches = driver.find_elements(By.XPATH, ".//li[@class='KambiBC-sandwich-filter__event-list-item']")
-            
+            matches = driver.find_elements(By.XPATH, ".//li[@class='KambiBC-sandwich-filter__event-list-item KambiBC-sandwich-filter__event-list-competition-item']")
+            print(f'this is Matches: {matches}')
             # Loop through each match to extract the links
             for match in matches:
+                print(f'his is Match: {match}')
                 current_day = time.localtime()[6]
                 try:
                     match_day = match.find_element(By.XPATH, ".//span[@class='KambiBC-event-item__start-time--date']").text
+                    print(f'his is Match_day: {match_day}')
+
                 except:
                     continue
                 
@@ -386,13 +389,18 @@ class Scraper:
                         continue
                     
                 link = match.find_element(By.XPATH, ".//a").get_attribute('href')
+                print(f'his is Link: {link}')
+
                 try:
                     amount = int(match.find_element(By.XPATH, ".//div[@class='KambiBC-sandwich-filter_show-more-right-text']").text.split("B", 1)[0])
+                    print(f'his is Amount: {amount}')
+
                 except:
                     continue
                 if link.find('live') == -1 and amount > 40:
                     matchLinks.append(link)
-        
+                    print(f'his is MatchLinks: {matchLinks}')
+                
             # Visit each single match to extract the needed data
             for link in matchLinks:
                 driver.get(link)
@@ -439,8 +447,8 @@ class Scraper:
         links_used = 0
         
         for i in range(0, max_workers):
-            #drivers.append(webdriver.Chrome(executable_path=executable_path,options=options))
-            drivers.append(webdriver.Chrome(options=options))
+            drivers.append(webdriver.Chrome(executable_path=executable_path,options=options))
+            #drivers.append(webdriver.Chrome(options=options))
             threads.append(threading.Thread(target=cookies, args=[drivers[i]]))
             threads[i].start()
         
