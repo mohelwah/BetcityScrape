@@ -43,6 +43,9 @@ for option in options:
 
 driver = webdriver.Chrome(options=chrome_options)
 
-driver.get("https://www.google.com")
+#driver.get("https://www.livescorebet.com/") #ok
+
+url = 'https://www.livescorebet.com/nl-nl/sports/volleybal/SBTC1_19'
+driver.get(url)
 print(driver.title)
 driver.quit()
