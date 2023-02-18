@@ -7,8 +7,12 @@ from time import sleep
 from random import randint
 import pandas as pd
 
-#executable_path = "C:\webdriver\chromedriver.exe"
-driver = webdriver.Chrome()
+executable_path = "C:\webdriver\chromedriver.exe"
+try:
+    driver = webdriver.Chrome()
+except:
+    driver = webdriver.Chrome(executable_path=executable_path)
+
 driver.get('https://www.google.com/')
 
 sleep(500)

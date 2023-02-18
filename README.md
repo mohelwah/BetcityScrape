@@ -1,8 +1,10 @@
 [![Scrape with power bi integeration](https://github.com/mohelwah/powerBi_scrape_intgration/actions/workflows/main.yml/badge.svg)](https://github.com/mohelwah/powerBi_scrape_intgration/actions/workflows/main.yml)
 
 
-# Scrape with power bi integeration
-this is scaffold template for python 
+# Project Type: Scrape Project
+# Project Name : Betcity 
+
+this is scaffold template for Betcity Scrape in python 
  Create the following:
  - Makefile
  - requirement.txt
