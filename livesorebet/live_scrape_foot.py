@@ -34,9 +34,9 @@ class Scraper:
             
             # Cookie button
             try:
-                WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, '//*[@id="CybotCookiebotDialogBodyButtonAccept"]')))
+                WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, '//*[@id="onetrust-accept-btn-handler"]')))
                 time.sleep(5)
-                driver.find_element(By.XPATH, '//*[@id="CybotCookiebotDialogBodyButtonAccept"]').click()
+                driver.find_element(By.XPATH, '//*[@id="onetrust-accept-btn-handler"]').click()
             except: 
                 return
             
