@@ -29,3 +29,7 @@ this is scaffold template for Betcity Scrape in python
 * install chrome 
 - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 - sudo apt install ./google-chrome-stable_current_amd64.deb
+
+## run jupyter notebook
+  - jupyter noteboke: - install ipykernel
+        run command: - ipython kernel install --user --name=scrape
