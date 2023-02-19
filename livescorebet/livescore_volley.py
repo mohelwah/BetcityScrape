@@ -362,7 +362,7 @@ class Scraper:
                     
                 except:
                     continue
-                 ''''
+                '''
                 if match_day == "Today":
                     match_day = time.localtime()[6]
                 elif match_day == "Tomorrow":
