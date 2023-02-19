@@ -45,6 +45,67 @@ class Scraper:
             
             # List of team-names: ['teamname1'\n'teamname2', ....]
             names = []
+            winner = []
+            handicap_points = []
+            set_handicap = []
+            over_under = []
+            over_under_points = []
+
+            def click(webElement):
+                ActionChains(driver).move_to_element(webElement)
+                webElement.click()
+                
+            def wait(xpath):
+                try:
+                    WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, xpath)))
+                except: 
+                    return
+            ## LiveScoreBet scraper  
+            def scrape_teamsName():
+                # get odds blocks  
+                odds = driver.find_elements(By.CLASS_NAME, "fwc8o3-15")
+                odds = [odd.text for odd in odds if odd.text != ""]
+                for i in range(len(odds)):
+                    type = odds[i].split(sep="\n")
+                    if type[0] == "Winner":
+                        name= type[1] + "\n" + type[3]
+                        break
+                    elif type[0] == "Handicap Points":
+                        name = type[1] + "\n" + type[3]
+                        break
+                    elif type[0] == "Set Handicap":
+                        name = type[1] + "\n" + type[3]
+                names.append(name)
+                #for debug
+                print('this form scrape_teamsName function {}'.format(names))
+
+            def scrape_odds():
+
+                odds = driver.find_elements(By.CLASS_NAME, "fwc8o3-15")
+                odds = [odd.text for odd in odds if odd.text != ""]
+                for i in range(len(odds)):
+                    type = odds[i].split(sep="\n")
+                    if type[0] == "Winner":
+                        temp = odds[i].split(sep="\n")
+                        winner.append(temp[2] + "\n" + temp[4])
+
+                    elif type[0] == "Handicap Points":
+                        temp = odds[i].split(sep="\n")
+                        handicap_points.append(temp[2] + "\n" + temp[4])
+                    elif type[0] == "Set Handicap":
+                        temp = odds[i].split(sep="\n")
+                        set_handicap.append(temp[2] + "\n" + temp[4])
+                    elif type[0] == "Over/Under":
+                        temp = odds[i].split(sep="\n")
+                        over_under.append(temp[3] + "\n" + temp[4] + "\n" + temp[5])
+                    elif type[0] == "Over/Under Points":
+                        temp = odds[i].split(sep="\n")
+                        over_under_points.append(temp[3] + "\n" + temp[4] + "\n" + temp[5])
+                #for debug
+                print('this form scrape_odds function {}'.format(winner))
+                
+            ''' From betcity scraper    
+            
             # List of hyperlinks to bets
             bet_links = []
             # List of 1x2 odds
@@ -65,17 +126,6 @@ class Scraper:
             beide_teams_scoren_1e_list = []
             # List of second half Beide teams scoren
             beide_teams_scoren_2e_list = []
-            
-            def click(webElement):
-                ActionChains(driver).move_to_element(webElement)
-                webElement.click()
-                
-            def wait(xpath):
-                try:
-                    WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, xpath)))
-                except: 
-                    return
-                
             def scrape_result():
                 # Find all 1x2 odds
                 try:
@@ -334,6 +384,9 @@ class Scraper:
                     return
                 
                 click(button)
+            #End of betcity scraper 
+            '''
+            
             
             driver.get(link)
             print('*' * 50)
@@ -416,6 +469,12 @@ class Scraper:
                 # Wait for the data to load
                 wait(".//button[@class='KambiBC-outcomes-list__toggler-toggle-button']")
                 
+                # Start livescoreBet Scraper
+                scrape_teamsName()
+                scrape_odds()
+                '''
+                From Betcity scraper
+
                 # Scrape the result data
                 if not scrape_result():
                     continue
@@ -436,12 +495,12 @@ class Scraper:
                 
                 # Scrape the halves odds category data
                 #scrape_halves()
-                
+                #End betcity scraper
+                '''
+
             # After each competition we create a dataframe with the odds that we have so far collected
-            dict_worker = {'Teams': names, 'result' : result_list, 'over_under' : over_under_list, 'over_under_1e' : over_under_1e_list,
-                        'over_under_2e' : over_under_2e_list, 'handicap' : handicap_list, 'beide_teams_scoren' : beide_teams_scoren_list,
-                        'beide_teams_scoren_1e' : beide_teams_scoren_1e_list, 'beide_teams_scoren_2e' : beide_teams_scoren_2e_list, 'dubbele_kans' : dubbele_kans_list, 'bet_links' : bet_links}
-        
+            dict_worker = {'Teams': names, 'winner' : winner, 'handicap points' : handicap_points, 'set handicap' : set_handicap, 'over under' : over_under, 'over under points' : over_under_points}
+
             dataframes[worker] = pd.concat([dataframes[worker], pd.DataFrame.from_dict(dict_worker)])
         
         
