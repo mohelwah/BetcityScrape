@@ -51,7 +51,11 @@ class Scraper:
             set_handicap = []
             over_under = []
             over_under_points = []
-
+            winnar_trans = ["winner","winnaar"]
+            set_trans = ["set Handicap", "set"]
+            handicap_points_trans = ["handicap Points","handicap punten"]
+            over_under_trans = ["over/under", "meer dan/minder dan"]
+            over_under_points_trans = ["over/under points", "meer dan/minder dan punten"]
             def click(webElement):
                 ActionChains(driver).move_to_element(webElement)
                 webElement.click()
@@ -65,41 +69,45 @@ class Scraper:
             def scrape_teamsName():
                 # get odds blocks  
                 odds = driver.find_elements(By.CLASS_NAME, "fwc8o3-15")
-                odds = [odd.text for odd in odds if odd.text != ""]
+                odds = [odd.text.lower() for odd in odds if odd.text != ""]
                 for i in range(len(odds)):
                     type = odds[i].split(sep="\n")
-                    if type[0] == "Winner":
+                    if type[0] in winnar_trans:
                         name= type[1] + "\n" + type[3]
                         break
-                    elif type[0] == "Handicap Points":
-                        name = type[1] + "\n" + type[3]
+                    elif type[0] in handicap_points_trans:
+                        name = type[1][:-4] + "\n" + type[3][:-4]
                         break
-                    elif type[0] == "Set Handicap":
-                        name = type[1] + "\n" + type[3]
-                names.append(name)
+                    elif type[0] in set_trans:
+                        name = type[1][:-4] + "\n" + type[3][:-4]
+                    
+                try:
+                    names.append(name)
+                except:
+                    print('coudnt find name')
                 #for debug
                 print('this form scrape_teamsName function {}'.format(names))
 
             def scrape_odds():
 
                 odds = driver.find_elements(By.CLASS_NAME, "fwc8o3-15")
-                odds = [odd.text for odd in odds if odd.text != ""]
+                odds = [odd.text.lower() for odd in odds if odd.text != ""]
                 for i in range(len(odds)):
                     type = odds[i].split(sep="\n")
-                    if type[0] == "Winner":
+                    if type[0] in winnar_trans:
                         temp = odds[i].split(sep="\n")
                         winner.append(temp[2] + "\n" + temp[4])
 
-                    elif type[0] == "Handicap Points":
+                    elif type[0] in handicap_points_trans:
                         temp = odds[i].split(sep="\n")
                         handicap_points.append(temp[2] + "\n" + temp[4])
-                    elif type[0] == "Set Handicap":
+                    elif type[0] in set_trans:
                         temp = odds[i].split(sep="\n")
                         set_handicap.append(temp[2] + "\n" + temp[4])
-                    elif type[0] == "Over/Under":
+                    elif type[0] in over_under_trans:
                         temp = odds[i].split(sep="\n")
                         over_under.append(temp[3] + "\n" + temp[4] + "\n" + temp[5])
-                    elif type[0] == "Over/Under Points":
+                    elif type[0] in over_under_points_trans:
                         temp = odds[i].split(sep="\n")
                         over_under_points.append(temp[3] + "\n" + temp[4] + "\n" + temp[5])
                 #for debug
