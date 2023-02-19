@@ -7,17 +7,18 @@ from time import sleep
 from random import randint
 import pandas as pd
 
-executable_path = "C:\webdriver\chromedriver.exe"
+
 
 url = "https://www.livescorebet.com/nl-nl/sports/volleybal/SBTC1_19"
 
 try:
+    executable_path = "C:\webdriver\chromedriver.exe"
     driver = webdriver.Chrome(executable_path=executable_path)
 except:
     driver = webdriver.Chrome()
     
 driver.get(url)
-sleep(randint(2,10))
+sleep(10)
 soup = BeautifulSoup(driver.page_source, 'html.parser')
 
 base_url = "https://www.livescorebet.com"

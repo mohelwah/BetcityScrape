@@ -12,7 +12,7 @@ import time
 import pickle
 
 import pandas as pd
-executable_path = "C:\webdriver\chromedriver.exe"
+
 
 class Scraper:
     
@@ -30,7 +30,7 @@ class Scraper:
         links = []
 
         def cookies(driver):
-            driver.get('https://www.betcity.nl/sportsbook#sports-hub/football')
+            driver.get('https://www.livescorebet.com/nl-nl/sports/volleybal/SBTC1_19')
             
             # Cookie button
             try:
@@ -348,16 +348,24 @@ class Scraper:
                 return
         
             # Find all matches
-            matches = driver.find_elements(By.XPATH, ".//li[@class='KambiBC-sandwich-filter__event-list-item']")
+            matches = driver.find_elements(By.CLASS_NAME, "effrky-4")
             
             # Loop through each match to extract the links
             for match in matches:
                 current_day = time.localtime()[6]
                 try:
-                    match_day = match.find_element(By.XPATH, ".//span[@class='KambiBC-event-item__start-time--date']").text
+                    match_day = match.find_element(By.XPATH, ".//span[@class='sc-17p8rfo-0 dzNdgZ']").text.split(sep=",")[0]
+                    
                 except:
                     continue
-                
+
+                if match_day == "Today":
+                    match_day = time.localtime()[6]
+                elif day == "Tomorrow":
+                    match_day = time.localtime()[6] + 1
+                else:
+                    match_day = day
+                ''''
                 if match_day == "ma":
                     match_day = 0
                 elif match_day == "di":
@@ -374,7 +382,7 @@ class Scraper:
                     match_day = 6
                 else:
                     continue
-                
+                '''
                 date_diff = match_day - current_day
                 if current_day != 6:
                     if date_diff < 0 or date_diff > 1 :
@@ -382,14 +390,15 @@ class Scraper:
                 else:
                     if match_day != 0 and match_day != 6:
                         continue
-                    
+              
                 link = match.find_element(By.XPATH, ".//a").get_attribute('href')
                 try:
                     amount = int(match.find_element(By.XPATH, ".//div[@class='KambiBC-sandwich-filter_show-more-right-text']").text.split("B", 1)[0])
                 except:
                     continue
-                if link.find('live') == -1 and amount > 40:
-                    matchLinks.append(link)
+                #This condition is't working for this site
+                #if link.find('live') == -1 and amount > 40:
+                matchLinks.append(link)
         
             # Visit each single match to extract the needed data
             for link in matchLinks:
@@ -402,22 +411,22 @@ class Scraper:
                 if not scrape_result():
                     continue
                 
-                bet_links.append(driver.current_url)
+                #bet_links.append(driver.current_url)
                 
                 # Scrape the dubbele kans data
-                scrape_dubbele_kans()
+                #scrape_dubbele_kans()
                 
                 # Scrape the over/under data
-                scrape_over_under()
+                #scrape_over_under()
                 
                 # Scrape the beide teams scoren data
-                scrape_beide_teams_scoren()
+                #scrape_beide_teams_scoren()
                 
                 # Scrape the handicap data
-                scrape_handicap()
+                #scrape_handicap()
                 
                 # Scrape the halves odds category data
-                scrape_halves()
+                #scrape_halves()
                 
             # After each competition we create a dataframe with the odds that we have so far collected
             dict_worker = {'Teams': names, 'result' : result_list, 'over_under' : over_under_list, 'over_under_1e' : over_under_1e_list,
@@ -430,15 +439,18 @@ class Scraper:
         ## Run the Scraper
         start_time = time.time()
         
-        with open('betcity_links.txt', 'r') as f:
+        with open('livescore_links.txt', 'r') as f:
             links = f.read().split('\n')
         
         amount_links = len(links)
         links_used = 0
         
         for i in range(0, max_workers):
-            drivers.append(webdriver.Chrome(executable_path=executable_path,options=options))
-            
+            try:
+                executable_path = "C:\webdriver\chromedriver.exe"
+                drivers.append(webdriver.Chrome(executable_path=executable_path,options=options))
+            except:
+                drivers.append(webdriver.Chrome(options=options))
             threads.append(threading.Thread(target=cookies, args=[drivers[i]]))
             threads[i].start()
         
@@ -472,7 +484,7 @@ class Scraper:
             if skip:
                 continue
             
-            output = open('df_betcity_volly', 'wb')
+            output = open('df_liveScore_volly', 'wb')
             pickle.dump(df_betcity, output)
             output.close()
             
