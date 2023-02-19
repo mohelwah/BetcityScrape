@@ -10,7 +10,8 @@ from selenium.webdriver.common.action_chains import ActionChains
 import threading
 import time
 import pickle
-
+from random import randint
+from time import sleep
 import pandas as pd
 
 
@@ -449,13 +450,14 @@ class Scraper:
                 else:
                     if match_day != 0 and match_day != 6:
                         continue
-                '''
-                link = match.find_element(By.XPATH, ".//a").get_attribute('href')
-                try:
+                    try:
                     amount = int(match.find_element(By.XPATH, ".//div[@class='KambiBC-sandwich-filter_show-more-right-text']").text.split("B", 1)[0])
                 except:
                     print('no amount found')
                     continue
+                '''
+                link = match.find_element(By.XPATH, ".//a").get_attribute('href')
+                
                 #This condition is't working for this site
                 #if link.find('live') == -1 and amount > 40:
                 print('link is {}'.format(link))
@@ -465,9 +467,11 @@ class Scraper:
             # Visit each single match to extract the needed data
             for link in matchLinks:
                 driver.get(link)
-                
+                # sleep for random time to avoid being detected as a bot
+
+                sleep(randint(3, 10))
                 # Wait for the data to load
-                wait(".//button[@class='KambiBC-outcomes-list__toggler-toggle-button']")
+                #wait(".//button[@class='KambiBC-outcomes-list__toggler-toggle-button']")
                 
                 # Start livescoreBet Scraper
                 scrape_teamsName()
