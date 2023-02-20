@@ -45,6 +45,7 @@ class Scraper:
         def scrape(driver, link, worker):
             
             # List of team-names: ['teamname1'\n'teamname2', ....]
+            active_links = []
             bet_links = []
             names = []
             winner = []
@@ -113,288 +114,7 @@ class Scraper:
                         over_under_points.append(temp[3] + "\n" + temp[4] + "\n" + temp[5])
                 #for debug
                 print('this form scrape_odds function winner {}\n set {}\n hed{} \n over{} \npointer {}'.format(winner,set_handicap,handicap_points,over_under, over_under_points))
-            ''' From betcity scraper    
-            
-            # List of hyperlinks to bets
-            bet_links = []
-            # List of 1x2 odds
-            result_list = []
-            # List of over/under odds
-            over_under_list = []
-            # List of first half over/under odds
-            over_under_1e_list = []
-            # List of second half over/under odds
-            over_under_2e_list = []
-            # List of handicap odds
-            handicap_list = []
-            # List of dubbele kans odds
-            dubbele_kans_list = []
-            # List of Beide teams scoren
-            beide_teams_scoren_list = []
-            # List of first half Beide teams scoren
-            beide_teams_scoren_1e_list = []
-            # List of second half Beide teams scoren
-            beide_teams_scoren_2e_list = []
-            def scrape_result():
-                # Find all 1x2 odds
-                try:
-                    result = driver.find_element(By.XPATH, ".//li[@class='KambiBC-bet-offer-subcategory KambiBC-bet-offer-subcategory--onecrosstwo']")
-                except:
-                    return False
-                    
-                # Add the teamnames to the right list
-                teamNames = result.find_elements(By.XPATH, ".//div[@class='KambiBC-outcomes-list__column']/button/div/div[1]")
-                names.append(teamNames[0].text + "\n" + teamNames[2].text)
-                    
-                # Add the result odds to the right list
-                result_odds = result.find_elements(By.XPATH, ".//div[@class='KambiBC-outcomes-list__column']/button/div/div[2]")
-                
-                if len(result_odds) < 3:
-                    result_list.append("1.0\n1.0\n1.0")
-                    return True
-                
-                result_list.append(result_odds[0].text + "\n" + result_odds[1].text + "\n" + result_odds[2].text)
-                return True
-            
-            def scrape_dubbele_kans():
-                # Find all dubbele kans odds
-                try:
-                    dubbele_kans = driver.find_element(By.XPATH, ".//li[@class='KambiBC-bet-offer-subcategory KambiBC-bet-offer-subcategory--doublechance']")
-                except:
-                    dubbele_kans_list.append("1.0\n1.0\n1.0")
-                    return
-                    
-                # Add all the dubbele kans odds to the right list
-                dubbele_kans_odds = dubbele_kans.find_elements(By.XPATH, ".//div[@class='KambiBC-outcomes-list__column']/button/div/div[2]")
-                
-                if len(dubbele_kans_odds) < 3:
-                    dubbele_kans_list.append(0)
-                    return
-                
-                dubbele_kans_list.append(dubbele_kans_odds[0].text + "\n" + dubbele_kans_odds[1].text + "\n" + dubbele_kans_odds[2].text)
-            
-            def scrape_over_under():
-                # The string that contains the odds for all over/under bets
-                over_under_string = ""
-                    
-                # Find all over/under odds
-                try:
-                    over_under = driver.find_element(By.XPATH, ".//li[@class='KambiBC-bet-offer-subcategory KambiBC-bet-offer-subcategory--overunder']")
-                except:
-                    over_under_list.append(0)
-                    return
-                    
-                # Show the over/under odds
-                lijst_tonen(over_under)
-                
-                # Find the odds
-                over_under_odds = over_under.find_elements(By.XPATH, ".//div[@class='KambiBC-outcomes-list__column']/button")
-                  
-                # The amount of over under odds
-                n = int(len(over_under_odds)/2)
-                
-                # Add all the over under odds to a formatted string
-                for i in range(n):
-                    number = over_under_odds[i].find_element(By.XPATH, ".//div/div[1]/div[2]").text
-                    try:
-                        odd_over = over_under_odds[i].find_element(By.XPATH, ".//div/div[2]/div[2]").text
-                    except:
-                        odd_over = "1"
-                    try:
-                        odd_under = over_under_odds[i + n].find_element(By.XPATH, ".//div/div[2]/div[2]").text
-                    except:
-                        odd_under = "1"
-                    over_under_string += number + "\n" + odd_over + "\n" + odd_under + "|"
-                
-                # Add all the over/under odds to the right list
-                over_under_list.append(over_under_string)
-            
-            def scrape_beide_teams_scoren():
-                # Find the beide teams scoren totaal odds
-                try:
-                    beide_teams_scoren = driver.find_element(By.XPATH, ".//li[div[div[div[h3[span[text()='Beide teams scoren']]]]]]")
-                except:
-                    beide_teams_scoren_list.append(0)
-                    return
-                    
-                # Get all beide teams scoren odds on the game and then put them in the list
-                beide_teams_scoren_odds = beide_teams_scoren.find_elements(By.XPATH, ".//div[@class='KambiBC-outcomes-list__column']/button/div/div[2]")
-                
-                if len(beide_teams_scoren_odds) < 2:
-                    beide_teams_scoren_list.append(0)
-                    return
-                
-                beide_teams_scoren_list.append(beide_teams_scoren_odds[0].text + "\n" + beide_teams_scoren_odds[1].text)
-            
-            def scrape_handicap():
-                # The string that contains the odds for all handicaps
-                handicap_string = ""
-                    
-                # Click to see all handicap bets
-                try:
-                    asian = driver.find_element(By.XPATH, ".//li[div[header[div[div[contains(text(), 'Asian Lines')]]]]]") 
-                except:
-                   handicap_list.append(0)
-                   return
-                    
-                # Move to the asian subbets and open them
-                click(asian)
-                
-                # Let the data load
-                time.sleep(0.5)
-                    
-                # Find all handicap odds
-                handicap = driver.find_element(By.XPATH, ".//li[@class='KambiBC-bet-offer-subcategory KambiBC-bet-offer-subcategory--asian']")
-                    
-                # Show the handicap odds
-                lijst_tonen(handicap)
-                    
-                # Find the handicap odds
-                numbers = handicap.find_elements(By.XPATH, ".//div[1][@class='KambiBC-outcomes-list__column']/button/div/div[1]/div[2]")
-                handicap_home_odds = handicap.find_elements(By.XPATH, ".//div[1][@class='KambiBC-outcomes-list__column']/button/div/div[2]/div[2]")
-                handicap_away_odds = handicap.find_elements(By.XPATH, ".//div[2][@class='KambiBC-outcomes-list__column']/button/div/div[2]/div[2]")
-                    
-                # Add all the handicap odds to a formatted string
-                for i in range(len(handicap_home_odds)):
-                    number = numbers[i].text
-                    if number.find(".5") == -1:
-                        continue
-                    odd_home = handicap_home_odds[i].text
-                    odd_away = handicap_away_odds[i].text
-                    handicap_string += number + "\n" + odd_home + "\n" + odd_away + "|"
-                
-                # Add all the handicap odds to the right list
-                handicap_list.append(handicap_string)
-            
-            def scrape_halves():
-                # Click to see all half category bets
-                try:
-                    half = driver.find_element(By.XPATH, ".//li[div[header[div[div[contains(text(), 'Helft')]]]]]") 
-                except:
-                    over_under_1e_list.append(0)
-                    over_under_2e_list.append(0)
-                    beide_teams_scoren_1e_list.append(0)
-                    beide_teams_scoren_2e_list.append(0)
-                    return
-                
-                # Move to the half category subbets and open them
-                click(half)
-                
-                # Let the data load
-                time.sleep(0.5)
-                
-                # Scrape the over/under bets from the first half
-                try:
-                    scrape_over_under_1e(driver.find_element(By.XPATH, ".//li[div[div[div[h3[span[text()='Totaal aantal doelpunten - 1e Helft']]]]]]"))
-                except:
-                    over_under_1e_list.append(0)
-                
-                # Scrape the over/under bets from the second half
-                try:
-                    scrape_over_under_2e(driver.find_element(By.XPATH, ".//li[div[div[div[h3[span[text()='Totaal aantal doelpunten - 2e Helft']]]]]]"))
-                except:
-                    over_under_2e_list.append(0)
-                
-                # Scrape the beide teams winnen bets from the first half
-                try:
-                    scrape_beide_teams_scoren_1e(driver.find_element(By.XPATH, ".//li[div[div[div[h3[span[text()='Beide teams scoren - 1e Helft']]]]]]"))
-                except:
-                    beide_teams_scoren_1e_list.append(0)
-                    
-                # Scrape the over/under bets from the second half
-                try:
-                    scrape_beide_teams_scoren_2e(driver.find_element(By.XPATH, ".//li[div[div[div[h3[span[text()='Beide teams scoren - 2e Helft']]]]]]"))
-                except:
-                    beide_teams_scoren_2e_list.append(0)
-                
-            def scrape_over_under_1e(over_under):
-                # The string that contains the odds for all over/under bets
-                over_under_string = ""
-                
-                # Click on the lijst tonen button if it exists
-                lijst_tonen(over_under)
-                
-                # Find the odds
-                over_under_odds = over_under.find_elements(By.XPATH, ".//div[@class='KambiBC-outcomes-list__column']/button")
-                
-                # The amount of over under odds
-                n = int(len(over_under_odds)/2)
-                
-                # Add all the over under odds to a formatted string
-                for i in range(n):
-                    number = over_under_odds[i].find_element(By.XPATH, ".//div/div[1]/div[2]").text
-                    try:
-                        odd_over = over_under_odds[i].find_element(By.XPATH, ".//div/div[2]/div[2]").text
-                    except:
-                        odd_over = "1"
-                    try:
-                        odd_under = over_under_odds[i + n].find_element(By.XPATH, ".//div/div[2]/div[2]").text
-                    except:
-                        odd_under = "1"
-                    over_under_string += number + "\n" + odd_over + "\n" + odd_under + "|"
-                
-                # Add all the over/under odds to the right list
-                over_under_1e_list.append(over_under_string)
-                
-            def scrape_over_under_2e(over_under):
-                # The string that contains the odds for all over/under bets
-                over_under_string = ""
-                    
-                # Click on the lijst tonen button if it exists
-                lijst_tonen(over_under)
-                
-                # Find the odds
-                over_under_odds = over_under.find_elements(By.XPATH, ".//div[@class='KambiBC-outcomes-list__column']/button")
-                  
-                # The amount of over under odds
-                n = int(len(over_under_odds)/2)
-                
-                # Add all the over under odds to a formatted string
-                for i in range(n):
-                    number = over_under_odds[i].find_element(By.XPATH, ".//div/div[1]/div[2]").text
-                    try:
-                        odd_over = over_under_odds[i].find_element(By.XPATH, ".//div/div[2]/div[2]").text
-                    except:
-                        odd_over = "1"
-                    try:
-                        odd_under = over_under_odds[i + n].find_element(By.XPATH, ".//div/div[2]/div[2]").text
-                    except:
-                        odd_under = "1"
-                    over_under_string += number + "\n" + odd_over + "\n" + odd_under + "|"
-                
-                # Add all the over/under odds to the right list
-                over_under_2e_list.append(over_under_string)
-                
-            def scrape_beide_teams_scoren_1e(beide_teams_scoren):
-                # Get all beide teams scoren odds on the game and then put them in the list
-                beide_teams_scoren_odds = beide_teams_scoren.find_elements(By.XPATH, ".//div[@class='KambiBC-outcomes-list__column']/button/div/div[2]")
-                
-                if len(beide_teams_scoren_odds) < 2:
-                    beide_teams_scoren_1e_list.append(0)
-                    return
-                
-                beide_teams_scoren_1e_list.append(beide_teams_scoren_odds[0].text + "\n" + beide_teams_scoren_odds[1].text)
-                
-            def scrape_beide_teams_scoren_2e(beide_teams_scoren):
-                # Get all beide teams scoren odds on the game and then put them in the list
-                beide_teams_scoren_odds = beide_teams_scoren.find_elements(By.XPATH, ".//div[@class='KambiBC-outcomes-list__column']/button/div/div[2]")
-                
-                if len(beide_teams_scoren_odds) < 2:
-                    beide_teams_scoren_2e_list.append(0)
-                    return
-                
-                beide_teams_scoren_2e_list.append(beide_teams_scoren_odds[0].text + "\n" + beide_teams_scoren_odds[1].text)
-            
-            # A function that presses on Lijst tonen if it exists
-            def lijst_tonen(webElement):
-                try:
-                    button = webElement.find_element(By.XPATH, ".//button[@class='KambiBC-outcomes-list__toggler-toggle-button']")
-                except:
-                    return
-                
-                click(button)
-            #End of betcity scraper 
-            '''
+
             
             
             driver.get(link)
@@ -414,6 +134,8 @@ class Scraper:
             # Find all matches
             matches = driver.find_elements(By.CLASS_NAME, "effrky-4")
             print('there are {} matched'.format(len(matches)))
+            if len(matches) != 0:
+                active_links.append(link)
             # Loop through each match to extract the links
             for match in matches:
                 print('current match is {}'.format(match))
@@ -477,7 +199,7 @@ class Scraper:
                 driver.get(link)
                 # sleep for random time to avoid being detected as a bot
 
-                sleep(randint(3, 10))
+                sleep(randint(3, 5))
                 # Wait for the data to load
                 #wait(".//button[@class='KambiBC-outcomes-list__toggler-toggle-button']")
                 
@@ -515,6 +237,11 @@ class Scraper:
             dict_worker = {'Teams': names, 'winner' : winner, 'handicap points' : handicap_points, 'set handicap' : set_handicap, 'over under' : over_under, 'over under points' : over_under_points}
 
             dataframes[worker] = pd.concat([dataframes[worker], pd.DataFrame.from_dict(dict_worker)])
+
+            with open('active_links.txt', 'w') as f:
+                for link in active_links:
+                    #write new line
+                    f.write(link + "\n")
         
         
         ## Run the Scraper
