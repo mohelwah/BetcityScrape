@@ -30,7 +30,7 @@ class Scraper:
         links = []
 
         def cookies(driver):
-            driver.get('https://www.betcity.nl/sportsbook#sports-hub/football')
+            driver.get('https://www.zebet.com/en/sport/14-volleyball')
             
             # Cookie button
             try:
@@ -49,7 +49,7 @@ class Scraper:
             bet_links = []
             # List of 1x2 odds
 
-            
+
             '''
             result_list = []
             # List of over/under odds
