@@ -45,6 +45,7 @@ class Scraper:
         def scrape(driver, link, worker):
             
             # List of team-names: ['teamname1'\n'teamname2', ....]
+            bet_links = []
             names = []
             winner = []
             handicap_points = []
@@ -111,8 +112,7 @@ class Scraper:
                         temp = odds[i].split(sep="\n")
                         over_under_points.append(temp[3] + "\n" + temp[4] + "\n" + temp[5])
                 #for debug
-                print('this form scrape_odds function {}'.format(winner))
-                
+                print('this form scrape_odds function winner {}\n set {}\n hed{} \n over{} \npointer {}'.format(winner,set_handicap,handicap_points,over_under, over_under_points))
             ''' From betcity scraper    
             
             # List of hyperlinks to bets
@@ -484,6 +484,7 @@ class Scraper:
                 # Start livescoreBet Scraper
                 scrape_teamsName()
                 scrape_odds()
+                bet_links.append(driver.current_url)
                 '''
                 From Betcity scraper
 
@@ -491,7 +492,7 @@ class Scraper:
                 if not scrape_result():
                     continue
                 
-                #bet_links.append(driver.current_url)
+                
                 
                 # Scrape the dubbele kans data
                 #scrape_dubbele_kans()

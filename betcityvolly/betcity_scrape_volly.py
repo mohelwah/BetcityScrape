@@ -50,6 +50,7 @@ class Scraper:
             
                        
             # for Vollyball srip
+            bet_links = []
             teams_list = []
             winnar_list = []
             top2_list = []
@@ -167,7 +168,7 @@ class Scraper:
                 #if not scrape_result():
                     #continue
                 
-                #bet_links.append(driver.current_url)
+                bet_links.append(driver.current_url)
                 soup = BeautifulSoup(driver.page_source, 'html.parser')
                 print(volly_scrape(soup=soup))
                 # Scrape the dubbele kans data
@@ -189,7 +190,7 @@ class Scraper:
             for vollyball
             '''
             # After each competition we create a dataframe with the odds that we have so far collecte
-            dict_worker = {"Teams": teams_list, "Winnar": winnar_list, "Top2": top2_list} 
+            dict_worker = {"Teams": teams_list, "Winnar": winnar_list, "Top2": top2_list, 'bet_links' : bet_links} 
             print(f'his is dict_worker: {dict_worker}')
 
             '''    
