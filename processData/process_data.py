@@ -28,10 +28,10 @@ def run():
     df_pinnacle = pickle.load(open('df_pinnacle', 'rb'))
     '''
     # List containing the names of the sites we are scraping
-    names = ["pinnacle", "hollandcasino", "zebet", "toto", "circus", "livescorebet", "betcity"]#"betcity", "circus", "bingoal", "hollandcasino", "toto"]
+    names = ["livescorebet", "betcity"]#"betcity", "circus", "bingoal", "hollandcasino", "toto"]
     
     # This list contains all the dataframes corresponding to a site has the same order as names[]
-    dataframes = [df_pinnacle, df_hollandcasino, df_zebet, df_toto, df_circus, df_livescorebet, df_betcity] #, df_betcity, df_circus, df_bingoal, df_hollandcasino, df_toto]
+    dataframes = [df_betcity, df_livescorebet] #, df_betcity, df_circus, df_bingoal, df_hollandcasino, df_toto]
 
     # This list conatains the names of all columns in wich a surebet can be found
     column_names = ['beide_teams_scoren', 'beide_teams_scoren_1e', 'beide_teams_scoren_2e', 'over_under', 'over_under_1e', 'over_under_2e', 'handicap', 'result', 'dubbele_kans']
